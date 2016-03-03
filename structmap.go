@@ -10,13 +10,6 @@ var Tag = "structmap"
 
 var TagPref = []string{Tag, "json"}
 
-const (
-	rMap    = reflect.Map
-	rStruct = reflect.Struct
-	rArray  = reflect.Array
-	rSlice  = reflect.Slice
-)
-
 var (
 	ErrNonStruct       = errors.New("not a struct")
 	ErrNonStringKeyMap = errors.New("only supports maps with string as key")
