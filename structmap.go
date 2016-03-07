@@ -16,52 +16,15 @@ var (
 	ErrNotPtr          = errors.New("not a pointer")
 )
 
-// check and unpack a interface for before marshalling
+// unpack an interface and get the underlying value and type
 func unpackInterface(i interface{}) (v reflect.Value, t reflect.Type) {
 	v = reflect.ValueOf(i)
-	t = v.Type()
 
-	if v.Kind() == reflect.Ptr {
-		if v.IsNil() {
-			return
-		}
+	for v.Kind() == reflect.Ptr || v.Kind() == reflect.Interface {
 		v = v.Elem()
-		t = v.Type()
 	}
 
-	if v.Kind() == reflect.Interface {
-		if v.IsNil() {
-			return
-		}
-		v = v.Elem()
-		t = v.Type()
-	}
-
-	return
-}
-
-// check and inspect a interface before unmarshalling
-func inspectInterface(i interface{}) (v reflect.Value, t reflect.Type, err error) {
-	v = reflect.ValueOf(i)
 	t = v.Type()
-
-	if v.Kind() != reflect.Ptr {
-		err = ErrNotPtr
-		return
-	}
-
-	v = v.Elem()
-	t = v.Type()
-
-	if v.Kind() == reflect.Interface {
-		v = v.Elem()
-		t = v.Type()
-	}
-
-	if v.Kind() != reflect.Struct {
-		err = ErrNonStruct
-		return
-	}
 
 	return
 }
