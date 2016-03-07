@@ -96,7 +96,6 @@ func TestMarshal(t *testing.T) {
 	"Foo": "foo",
 	"shoop": "bar"
 }`
-	_ = "breakpoint"
 	if m, err = Marshal(obj); err != nil {
 		t.Error(err)
 	}
@@ -107,13 +106,20 @@ func TestMarshal(t *testing.T) {
 }
 
 func TestUnmarshal(t *testing.T) {
+
 	m := map[string]interface{}{
-		"Foo": 42,
+		"Foo": "42",
+		"Bar": "0",
 	}
 
-	i := &struct{ Foo int }{}
+	type Foo struct {
+		Foo string
+		Bar string
+	}
 
-	Unmarshal(m, i)
+	i := Foo{}
+
+	Unmarshal(m, &i)
 
 	fmt.Println(m)
 	pJson(i)
