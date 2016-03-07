@@ -181,5 +181,3 @@ func parseTag(tag string) (name string, opts map[string]interface{}) {
 	}
 	return
 }
-
-func
