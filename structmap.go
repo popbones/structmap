@@ -6,9 +6,9 @@ import (
 	"strings"
 )
 
-var Tag = "structmap"
+var Tag = "map"
 
-var TagPref = []string{Tag, "json"}
+var TagPref = []string{Tag}
 
 var (
 	ErrNonStruct       = errors.New("not a struct")
@@ -181,3 +181,5 @@ func parseTag(tag string) (name string, opts map[string]interface{}) {
 	}
 	return
 }
+
+func

@@ -73,8 +73,8 @@ func TestMarshal(t *testing.T) {
 
 	type Bar1 struct {
 		Bar
-		Filtered string `structmap:"-"`
-		Anws     string `structmap:"shoop,inline"`
+		Filtered string `map:"-"`
+		Anws     string `map:"shoop,inline"`
 		Bar2     *Bar   `json:",inline"`
 	}
 
