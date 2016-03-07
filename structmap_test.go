@@ -54,7 +54,7 @@ func TestMarshal(t *testing.T) {
 	fmt.Println(err)
 
 	type Bar struct {
-		Foo  `json:",inline"`
+		Foo  `map:",inline"`
 		Anws string
 	}
 
@@ -75,7 +75,7 @@ func TestMarshal(t *testing.T) {
 		Bar
 		Filtered string `map:"-"`
 		Anws     string `map:"shoop,inline"`
-		Bar2     *Bar   `json:",inline"`
+		Bar2     *Bar   `map:",inline"`
 	}
 
 	obj = Bar1{
