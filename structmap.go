@@ -16,7 +16,7 @@ var (
 	ErrNotPtr          = errors.New("not a pointer")
 )
 
-// unpack an interface and get the underlying value and type
+// unpack an interface and get the underlying value and type. Enters infinite loop if i is a pointer to itself.
 func unpackInterface(i interface{}) (v reflect.Value, t reflect.Type) {
 	v = reflect.ValueOf(i)
 

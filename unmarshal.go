@@ -1,9 +1,6 @@
 package structmap
 
-import (
-	"fmt"
-	"reflect"
-)
+import "reflect"
 
 // Unmarshal a map to interface i. i should be a pointer to a struct.
 func Unmarshal(m map[string]interface{}, i interface{}) (err error) {
@@ -15,36 +12,10 @@ func Unmarshal(m map[string]interface{}, i interface{}) (err error) {
 
 func unmarshal(j interface{}, i interface{}) (err error) {
 	_ = "breakpoint"
-	vj := reflect.ValueOf(j)
-	tj := vj.Type()
+	vi, ti := unpackInterface(i)
+	vj, _ := unpackInterface(j)
 
-	if vj.Kind() == reflect.Ptr {
-		vj = vj.Elem()
-		tj = vj.Type()
-	}
-
-	if vj.Kind() == reflect.Interface {
-		vj = vj.Elem()
-		tj = vj.Type()
-	}
-
-	vi := reflect.ValueOf(i)
-	ti := vi.Type()
-
-	if vi.Kind() != reflect.Ptr {
-		err = ErrNotPtr
-		return
-	}
-
-	vi = vi.Elem()
-	ti = vi.Type()
-
-	if vi.Kind() == reflect.Interface {
-		vi = vi.Elem()
-		ti = vi.Type()
-	}
-
-	fmt.Println(tj.String())
+	// fmt.Println(tj.String())
 	_ = "breakpoint"
 	switch {
 	case vj.Kind() == reflect.Map:
