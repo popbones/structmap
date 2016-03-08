@@ -11,65 +11,81 @@ func Unmarshal(m map[string]interface{}, i interface{}) (err error) {
 }
 
 func unmarshal(j interface{}, i interface{}) (err error) {
-	_ = "breakpoint"
+	// _ = "breakpoint"
+
+	// Unpack all the interfaces
 	vi, ti := unpackInterface(i)
-	vj, _ := unpackInterface(j)
+	vj, tj := unpackInterface(j)
 
-	// fmt.Println(tj.String())
-	_ = "breakpoint"
+	// _ = "breakpoint"
+
 	switch {
-	case vj.Kind() == reflect.Map:
 
-		// if vj is a map, vi should be a struct or a map of the same key type
-		if vj.Len() == 0 {
-			return
-		}
-		if vj.MapKeys()[0].Kind() != reflect.String {
+	// When the input is a map we further unmarshal it
+	case vj.Kind() == reflect.Map && vi.Kind() == reflect.Struct:
+
+		// If j is a map but not a map[string]interface{}
+		if tj.Key().Kind() != reflect.String {
 			err = ErrNonStringKeyMap
 			return
 		}
 
-		if vi.Kind() == reflect.Struct {
-			fields := make(map[string]reflect.Value)
-			var inlineMap map[string]interface{}
+		// If j is empty
+		if vj.Len() == 0 {
+			return
+		}
 
-			for i := 0; i < ti.NumField(); i++ {
+		// Inspect the output sturct
+		fields := make(map[string]reflect.Value)
+		var inlineMap map[string]interface{}
 
-				field := ti.Field(i)
-				value := vi.Field(i)
-
-				name, opts := scanTag(field)
-
-				if name == "-" {
-					continue
-				}
-
-				if name == "" {
-					name = field.Name
-				}
-
-				if _, ok := opts["inline"]; ok {
-					inlineMap, _ = value.Interface().(map[string]interface{})
-				} else {
-					fields[name] = value
-				}
-			}
+		for i := 0; i < ti.NumField(); i++ {
 			_ = "breakpoint"
-			for _, key := range vj.MapKeys() {
-				name := key.Interface().(string)
-				if _, ok := fields[name]; ok {
-					value := vj.MapIndex(key)
-					if value.Kind() == reflect.Interface {
-						value = value.Elem()
+			field := ti.Field(i)
+			value := vi.Field(i)
+
+			name, opts := scanTag(field)
+
+			if name == "-" {
+				continue
+			}
+
+			if name == "" {
+				name = field.Name
+			}
+
+			if _, ok := opts["inline"]; ok {
+
+				value, _ = unpackInterface(value.Addr().Interface())
+
+				if value.Kind() == reflect.Map && value.Type().Key().Kind() == reflect.String {
+					inlineMap = value.Interface().(map[string]interface{})
+					if inlineMap == nil {
+						inlineMap = make(map[string]interface{})
+						value.Set(reflect.ValueOf(inlineMap))
 					}
-					fields[name].Set(value)
-				} else if inlineMap != nil {
-					inlineMap[name] = vj.MapIndex(key).Interface()
 				}
+			} else {
+				fields[name] = value
+			}
+		}
+
+		// Unmarshalling
+		for _, key := range vj.MapKeys() {
+			_ = "breakpoint"
+			name := key.Interface().(string)
+
+			if _, ok := fields[name]; ok {
+				if err = unmarshal(vj.MapIndex(key).Interface(), fields[name].Addr().Interface()); err != nil {
+					return
+				}
+			} else if inlineMap != nil {
+				inlineMap[name] = vj.MapIndex(key).Interface()
 			}
 		}
 
 	default:
+		// skip
 		vi.Set(vj)
 	}
 

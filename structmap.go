@@ -24,7 +24,9 @@ func unpackInterface(i interface{}) (v reflect.Value, t reflect.Type) {
 		v = v.Elem()
 	}
 
-	t = v.Type()
+	if v.IsValid() {
+		t = v.Type()
+	}
 
 	return
 }

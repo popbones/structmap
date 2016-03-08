@@ -39,7 +39,7 @@ func marshal(i interface{}) (m interface{}, err error) {
 			m = output
 			return
 		}
-		if v.MapKeys()[0].Kind() != reflect.String {
+		if t.Key().Kind() != reflect.String {
 			err = ErrNonStringKeyMap
 			return
 		}

@@ -19,8 +19,13 @@ type Bar struct {
 type Bar1 struct {
 	Bar
 	Filtered string `map:"-"`
-	Anws     string `map:"shoop,inline"`
+	Anws     string `map:"shoop"`
 	Bar2     *Bar   `map:",inline"`
+}
+
+type UnmarshalStruct struct {
+	L1       string
+	Extended map[string]interface{} `map:",inline"`
 }
 
 func TestMarshallingSimpleStruct(t *testing.T) {
@@ -185,6 +190,36 @@ func TestUnmarshallingToSimpleStruct(t *testing.T) {
 	if !asserMarshal(obj, exp) {
 		t.Fail()
 	}
+}
+
+func TestUnmarshallingToComplicatedStruct(t *testing.T) {
+	var (
+		m   map[string]interface{}
+		obj interface{}
+		exp string
+		err error
+	)
+
+	m = map[string]interface{}{
+		"L1":         "level 1 value",
+		"additional": "some additional value",
+	}
+	exp = `{
+	"L1": "level 1 value",
+	"Extended": {
+		"additional": "some additional value"
+	}
+}`
+
+	obj = &UnmarshalStruct{}
+
+	if err = Unmarshal(m, obj); err != nil {
+		t.Fail()
+	}
+	if !asserMarshal(obj, exp) {
+		t.Fail()
+	}
+
 }
 
 func jsonStr(v interface{}) string {
