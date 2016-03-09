@@ -49,6 +49,10 @@ func scanTag(f reflect.StructField) (name string, opts map[string]interface{}) {
 		updateMap(opts, _opts)
 	}
 
+	if name == "" {
+		name = f.Name
+	}
+
 	return
 }
 
