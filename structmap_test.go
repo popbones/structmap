@@ -3,6 +3,7 @@ package structmap
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"testing"
 )
 
@@ -216,6 +217,7 @@ func TestUnmarshallingToComplicatedStruct(t *testing.T) {
 	if err = Unmarshal(m, obj); err != nil {
 		t.Fail()
 	}
+	log.Println(obj)
 	if !asserMarshal(obj, exp) {
 		t.Fail()
 	}
